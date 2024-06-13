@@ -8,16 +8,6 @@ import (
 	"time"
 )
 
-func bubbleOneIt(arr *[]int) bool {
-	for i := 0; i < len(*arr)-1; i++ {
-		if (*arr)[i] > (*arr)[i+1] {
-			(*arr)[i], (*arr)[i+1] = (*arr)[i+1], (*arr)[i]
-			return false
-		}
-	}
-	return true
-}
-
 func getLength() int {
 	length := 30
 	var err error
@@ -58,38 +48,47 @@ func genArrays(length int) ([]int, []int) {
 }
 
 func draw(arr, brr []int, height int, screen tcell.Screen) {
+	screen.Clear()
 	for i := range arr {
 		style := tcell.StyleDefault
 		if brr[i] != arr[i] {
-			style = tcell.StyleDefault.Foreground(tcell.ColorRed)
+			style = tcell.StyleDefault.Foreground(tcell.ColorIndianRed)
 		}
-		for j := 0; j <= arr[i]/2; j++ {
-			screen.SetContent(i, height-j, '█', nil, style)
-		}
-		if arr[i]%2 == 1 {
-			screen.SetContent(i, height-arr[i]/2-1, '▄', nil, style)
-		}
+		drawColumn(i, arr[i], height, style, screen)
+	}
 
+	screen.Show()
+	time.Sleep(50 * time.Millisecond)
+
+}
+
+func drawColumn(i, a, height int, style tcell.Style, screen tcell.Screen) {
+	for j := 0; j <= a/2; j++ {
+		screen.SetContent(i, height-j, '█', nil, style)
+	}
+	if a%2 == 1 {
+		screen.SetContent(i, height-a/2-1, '▄', nil, style)
 	}
 }
 
-func quickSort(arr []int) []int {
-	if len(arr) < 2 {
-		return arr
+func done(arr []int, height int, screen tcell.Screen) {
+	draw(arr, arr, height, screen)
+	time.Sleep(500 * time.Millisecond)
+	//screen.Clear()
+	style := tcell.StyleDefault.Foreground(tcell.ColorGreen)
+	for i := range arr {
+		drawColumn(i, arr[i], height, style, screen)
+		screen.Show()
+		time.Sleep(20 * time.Millisecond)
 	}
-
-	pivot := arr[0]
-	var less, greater []int
-
-	for _, val := range arr[1:] {
-		if val < pivot {
-			less = append(less, val)
-		} else {
-			greater = append(greater, val)
-		}
+	style = tcell.StyleDefault.Foreground(tcell.ColorWhite)
+	//time.Sleep(100 * time.Millisecond)
+	for i := range arr {
+		drawColumn(i, arr[i], height, style, screen)
+		screen.Show()
+		time.Sleep(20 * time.Millisecond)
 	}
-
-	return append(append(quickSort(less), pivot), quickSort(greater)...)
+	time.Sleep(400 * time.Millisecond)
 }
 
 func main() {
@@ -115,16 +114,7 @@ func main() {
 
 	arr, brr := genArrays(length)
 
-	for {
-		draw(arr, brr, height, screen)
-		copy(brr, arr)
-		if bubbleOneIt(&arr) {
-			time.Sleep(1000 * time.Millisecond)
-			break
-		}
-		screen.Show()
-		time.Sleep(50 * time.Millisecond)
-
-		screen.Clear()
-	}
+	//bubble(arr, brr, screen)
+	cocktailShakerSort(arr, brr, screen)
+	done(arr, height, screen)
 }
