@@ -6,7 +6,6 @@ import (
 )
 
 func cocktailShakerSort(arr, brr []int, screen tcell.Screen) {
-	_, height := screen.Size()
 	n := len(arr)
 	swapped := true
 	start := 0
@@ -21,7 +20,7 @@ func cocktailShakerSort(arr, brr []int, screen tcell.Screen) {
 				copy(brr, arr)
 				arr[i], arr[i+1] = arr[i+1], arr[i] // Swap elements
 				screen.Clear()
-				draw(arr, brr, height, screen)
+				draw(arr, brr, screen)
 				swapped = true
 			}
 		}
@@ -46,7 +45,7 @@ func cocktailShakerSort(arr, brr []int, screen tcell.Screen) {
 				copy(brr, arr)
 				arr[i], arr[i+1] = arr[i+1], arr[i] // Swap elements
 				screen.Clear()
-				draw(arr, brr, height, screen)
+				draw(arr, brr, screen)
 				swapped = true
 			}
 		}
@@ -77,20 +76,19 @@ func quickSort(arr []int) []int {
 }
 
 func bubble(arr, brr []int, screen tcell.Screen) {
-	_, height := screen.Size()
 	for i := 0; i < len(arr); i++ {
 		for j := 0; j < len(arr)-i-1; j++ {
 			if arr[j] > arr[j+1] {
 				copy(brr, arr)
 				arr[j], arr[j+1] = arr[j+1], arr[j]
 				screen.Clear()
-				draw(arr, brr, height, screen)
+				draw(arr, brr, screen)
 			}
 		}
 	}
 }
 
-func quick(nums []int) []int {
+func quick(nums, brr []int, screen tcell.Screen) []int {
 	if len(nums) < 2 {
 		return nums
 	}
@@ -101,22 +99,55 @@ func quick(nums []int) []int {
 	pivotIndex := rand.Int() % len(nums)
 
 	// Move the pivot to the right
+	copy(brr, nums)
 	nums[pivotIndex], nums[right] = nums[right], nums[pivotIndex]
-
+	draw(nums, brr, screen)
 	// Pile elements smaller than the pivot on the left
 	for i := range nums {
 		if nums[i] < nums[right] {
+			copy(brr, nums)
 			nums[left], nums[i] = nums[i], nums[left]
+			draw(nums, brr, screen)
 			left++
 		}
 	}
 
 	// Place the pivot after the elements smaller than it
+	copy(brr, nums)
 	nums[left], nums[right] = nums[right], nums[left]
+	draw(nums, brr, screen)
 
 	// Recurse into the two subarrays
 	quickSort(nums[:left])
 	quickSort(nums[left+1:])
 
 	return nums
+}
+
+func mysort(arr, brr []int, screen tcell.Screen) {
+	for !isSorted(arr) {
+		//rand.Seed(time.Now().UnixNano())
+		i := rand.Int() % len(arr)
+		j := rand.Int() % (len(arr) - 1)
+		if j >= i {
+			j++
+		}
+		if i > j {
+			i, j = j, i
+		}
+		if arr[i] > arr[j] {
+			copy(brr, arr)
+			arr[i], arr[j] = arr[j], arr[i]
+			draw(arr, brr, screen)
+		}
+	}
+}
+
+func isSorted(arr []int) bool {
+	for i := range arr[:len(arr)-1] {
+		if arr[i] > arr[i+1] {
+			return false
+		}
+	}
+	return true
 }

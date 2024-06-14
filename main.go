@@ -47,7 +47,8 @@ func genArrays(length int) ([]int, []int) {
 	return arr, brr
 }
 
-func draw(arr, brr []int, height int, screen tcell.Screen) {
+func draw(arr, brr []int, screen tcell.Screen) {
+	_, height := screen.Size()
 	screen.Clear()
 	for i := range arr {
 		style := tcell.StyleDefault
@@ -72,7 +73,7 @@ func drawColumn(i, a, height int, style tcell.Style, screen tcell.Screen) {
 }
 
 func done(arr []int, height int, screen tcell.Screen) {
-	draw(arr, arr, height, screen)
+	draw(arr, arr, screen)
 	time.Sleep(500 * time.Millisecond)
 	//screen.Clear()
 	style := tcell.StyleDefault.Foreground(tcell.ColorGreen)
@@ -115,6 +116,9 @@ func main() {
 	arr, brr := genArrays(length)
 
 	//bubble(arr, brr, screen)
-	cocktailShakerSort(arr, brr, screen)
+	//cocktailShakerSort(arr, brr, screen)
+	//quick(arr, brr, screen)
+	mysort(arr, brr, screen)
+
 	done(arr, height, screen)
 }
